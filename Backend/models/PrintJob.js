@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 const PrintJobSchema = new mongoose.Schema({
   printId: { type: String, required: true, unique: true },
   file: { type: String, required: true },
-  printer: { type: String, required: true },
   copies: { type: Number, required: true },
   size: { type: String, required: true },
   color: { type: String, required: true },

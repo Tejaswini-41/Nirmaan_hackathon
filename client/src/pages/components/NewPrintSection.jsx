@@ -1,11 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
 const NewPrintSection = () => {
   const [estimatedPrice, setEstimatedPrice] = useState(0);
   const [ecoSuggestion, setEcoSuggestion] = useState("");
   const [file, setFile] = useState(null);
-  const [printer, setPrinter] = useState('');
   const [copies, setCopies] = useState(1);
   const [size, setSize] = useState('A4');
   const [color, setColor] = useState('Black & White');
@@ -13,6 +12,11 @@ const NewPrintSection = () => {
   const [pages, setPages] = useState('');
   const [schedule, setSchedule] = useState('');
   const [message, setMessage] = useState('');
+
+  useEffect(() => {
+    const currentDateTime = new Date().toISOString().slice(0, 16);
+    setSchedule(currentDateTime);
+  }, []);
 
   const handlePrintOptionsChange = (e) => {
     const { name, value } = e.target;
@@ -58,7 +62,6 @@ const NewPrintSection = () => {
 
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('printer', printer);
     formData.append('copies', copies);
     formData.append('size', size);
     formData.append('color', color);
@@ -74,6 +77,7 @@ const NewPrintSection = () => {
       const data = await response.json();
       if (response.ok) {
         setMessage(`Print job created successfully. Print ID: ${data.printId}`);
+        console.log("file uploaded successfully:", data);
       } else {
         setMessage(`Error: ${data.message}`);
       }
@@ -101,22 +105,6 @@ const NewPrintSection = () => {
               file:bg-amber-500 file:text-gray-900
               hover:file:bg-amber-400"
           />
-        </div>
-        <div>
-          <label htmlFor="printer" className="block text-sm font-medium text-gray-300 mb-2">
-            Select Printer
-          </label>
-          <select
-            id="printer"
-            value={printer}
-            onChange={(e) => setPrinter(e.target.value)}
-            className="mt-1 block w-full rounded-md bg-gray-700 border-gray-600 text-gray-100 focus:border-amber-500 focus:ring focus:ring-amber-500 focus:ring-opacity-50"
-          >
-            <option value="">Select Printer</option>
-            <option value="Library Printer">Library Printer</option>
-            <option value="Student Center Printer">Student Center Printer</option>
-            <option value="Dorm Printer">Dorm Printer</option>
-          </select>
         </div>
         <div>
           <label htmlFor="copies" className="block text-sm font-medium text-gray-300 mb-2">

@@ -5,7 +5,6 @@ const multer = require('multer');
 const { v4: uuidv4 } = require('uuid');
 const path = require('path');
 const PrintJob = require('./models/PrintJob'); 
-
 const cors = require("cors");
 
 const app = express();
@@ -37,6 +36,10 @@ app.post('/api/print', upload.single('file'), async (req, res) => {
     const { printer, copies, size, color, sides, pages, schedule } = req.body;
     const printId = uuidv4();
 
+    if (!pages) {
+      return res.status(400).json({ message: 'pls, select pages to print' });
+    }
+
     const newPrintJob = new PrintJob({
       printId,
       file: req.file.filename,
@@ -51,7 +54,7 @@ app.post('/api/print', upload.single('file'), async (req, res) => {
 
     await newPrintJob.save();
 
-    res.status(201).json({ message: 'Print job created successfully', printId });
+    console.log({ message: 'Print job created successfully', printId })
   } catch (error) {
     console.error('Error creating print job:', error);
     res.status(500).json({ message: 'Error creating print job', error: error.message });
