@@ -5,6 +5,7 @@ import LoginPage from "./pages/LoginPage"
 import SignUpPage from "./pages/SignUpPage"
 import StudentDashboard from "./pages/StudentDashboard"
 import AdminDashboard from "./pages/AdminDashboard"
+import CartPage from "./pages/CartPage";
 
 
 
@@ -18,6 +19,7 @@ const App = () => {
         <Route path="/register" element={<SignUpPage />} />
         <Route path="/student/dashboard" element={<StudentDashboard />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/cart" element={<CartPage />} />
       </Routes>
     </Router>
   )
