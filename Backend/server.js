@@ -4,8 +4,9 @@ const mongoose = require("mongoose");
 const multer = require('multer');
 const { v4: uuidv4 } = require('uuid');
 const path = require('path');
-const PrintJob = require('./models/PrintJob'); 
+const PrintJob = require('./models/PrintJob');
 const cors = require("cors");
+const cloudinary = require('cloudinary').v2;
 
 const app = express();
 
@@ -13,6 +14,13 @@ const app = express();
 app.use(express.json()); // Parse JSON bodies
 app.use(express.static('uploads'));
 app.use(cors()); // Enable CORS
+
+// Cloudinary configuration
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 // Import Routes
 const authRoutes = require("./routes/auth");
@@ -33,17 +41,24 @@ const upload = multer({ storage });
 // Endpoint to handle file uploads and store print options
 app.post('/api/print', upload.single('file'), async (req, res) => {
   try {
-    const { printer, copies, size, color, sides, pages, schedule } = req.body;
+    const { copies, size, color, sides, pages, schedule } = req.body;
     const printId = uuidv4();
 
+    // Validation check
     if (!pages) {
-      return res.status(400).json({ message: 'pls, select pages to print' });
+      return res.status(400).json({ message: 'Pages are required' });
     }
+
+    // Upload file to Cloudinary
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: 'print_jobs',
+    });
+
+    console.log("File uploaded to Cloudinary:", result.secure_url);
 
     const newPrintJob = new PrintJob({
       printId,
-      file: req.file.filename,
-      printer,
+      file: result.secure_url,
       copies,
       size,
       color,
