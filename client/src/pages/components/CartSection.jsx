@@ -1,23 +1,12 @@
-import React, { useState } from "react";
+import React, { useContext } from "react";
 import { motion } from "framer-motion";
+import { CartContext } from "./CartContext"; // Import the CartContext
+import CheckoutForm from "../payment/CheckoutForm"; // Import the CheckoutForm
 
 const CartSection = () => {
-  const [cart, setCart] = useState([
-    {
-      document: "Sample Document",
-      printer: "Library Printer",
-      copies: 1,
-      size: "A4",
-      color: "Black & White",
-      sides: "Single-sided",
-      pages: "1-5",
-      schedule: "Tomorrow, 2 PM",
-      price: 1.5,
-    },
-  ]);
+  const { cart, setCart } = useContext(CartContext); // Use the CartContext
 
-  const handlePayment = () => {
-    // Implement payment logic here
+  const handlePaymentSuccess = () => {
     console.log("Payment processed");
     // After payment, clear the cart and move items to order history
     setCart([]);
@@ -34,25 +23,17 @@ const CartSection = () => {
             {cart.map((item, index) => (
               <li key={index} className="bg-gray-800 p-4 rounded-lg shadow-lg">
                 <h3 className="text-lg font-semibold mb-2">{item.document}</h3>
-                <p>Printer: {item.printer}</p>
                 <p>Copies: {item.copies}</p>
                 <p>Size: {item.size}</p>
                 <p>Color: {item.color}</p>
                 <p>Sides: {item.sides}</p>
                 <p>Pages: {item.pages}</p>
                 <p>Schedule: {item.schedule}</p>
-                <p className="text-amber-400 font-bold">Price: {item.price} credits</p>
+                <p className="text-amber-400 font-bold">Price: {item.price} RS</p>
               </li>
             ))}
           </ul>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={handlePayment}
-            className="mt-4 w-full bg-amber-500 text-gray-900 py-2 px-4 rounded-md hover:bg-amber-400 transition duration-300 ease-in-out shadow-lg font-semibold"
-          >
-            Proceed to Payment
-          </motion.button>
+          <CheckoutForm handlePaymentSuccess={handlePaymentSuccess} />
         </div>
       )}
     </div>

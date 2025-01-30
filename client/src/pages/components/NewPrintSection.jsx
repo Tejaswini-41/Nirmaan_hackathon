@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { motion } from "framer-motion";
+import { CartContext } from "./CartContext"; // Import the CartContext
 
 const NewPrintSection = () => {
   const [estimatedPrice, setEstimatedPrice] = useState(0);
@@ -12,6 +13,7 @@ const NewPrintSection = () => {
   const [pages, setPages] = useState('');
   const [schedule, setSchedule] = useState('');
   const [message, setMessage] = useState('');
+  const { cart, setCart } = useContext(CartContext);
 
   useEffect(() => {
     const currentDateTime = new Date().toISOString().slice(0, 16);
@@ -84,6 +86,20 @@ const NewPrintSection = () => {
     } catch (error) {
       setMessage(`Error: ${error.message}`);
     }
+  };
+  const addToCart = () => {
+    const newPrintJob = {
+      document: file ? file.name : "Sample Document",
+      copies,
+      size,
+      color,
+      sides,
+      pages,
+      schedule,
+      price: estimatedPrice,
+    };
+    setCart([...cart, newPrintJob]);
+    setMessage("Item added to cart");
   };
 
   return (
@@ -200,15 +216,16 @@ const NewPrintSection = () => {
           </div>
         )}
         <div className="bg-amber-800 text-amber-100 p-3 rounded-md">
-          <p>Estimated Price: {estimatedPrice} credits</p>
+          <p>Estimated Price: {estimatedPrice} RS</p>
         </div>
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          type="submit"
+          type="button"
+          onClick={addToCart}
           className="w-full bg-amber-500 text-gray-900 py-2 px-4 rounded-md hover:bg-amber-400 transition duration-300 ease-in-out shadow-lg font-semibold"
         >
-          Submit Print Job
+          Add to Cart
         </motion.button>
       </form>
       {message && <div className="mt-4 text-amber-400">{message}</div>}
