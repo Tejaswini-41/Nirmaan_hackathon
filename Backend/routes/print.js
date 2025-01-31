@@ -1,20 +1,3 @@
-const mongoose = require('mongoose');
-
-const PrintJobSchema = new mongoose.Schema({
-  printId: { type: String, required: true, unique: true },
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  file: { type: String, required: true },
-  copies: { type: Number, required: true },
-  size: { type: String, required: true },
-  color: { type: String, required: true },
-  sides: { type: String, required: true },
-  pages: { type: String, required: true },
-  schedule: { type: String, required: true },
-  transactionStatus: { type: Boolean, default: false }, // Transaction status
-});
-
-module.exports = mongoose.model('PrintJob', PrintJobSchema);
-
 const express = require('express');
 const { v4: uuidv4 } = require('uuid');
 const cloudinary = require('cloudinary').v2;
@@ -64,7 +47,6 @@ router.post('/print', upload.single('file'), async (req, res) => {
       sides,
       pages,
       schedule,
-      transactionStatus: false, // Initially set to false
     });
 
     await newPrintJob.save();
@@ -73,22 +55,6 @@ router.post('/print', upload.single('file'), async (req, res) => {
   } catch (error) {
     console.error('Error creating print job:', error);
     res.status(500).json({ message: 'Error creating print job', error: error.message });
-  }
-});
-
-// Endpoint to update transaction status
-router.put('/print/:printId', async (req, res) => {
-  try {
-    const { transactionStatus } = req.body;
-    const printJob = await PrintJob.findOneAndUpdate(
-      { printId: req.params.printId },
-      { transactionStatus },
-      { new: true }
-    );
-    res.json(printJob);
-  } catch (error) {
-    console.error('Error updating transaction status:', error);
-    res.status(500).json({ message: 'Error updating transaction status', error: error.message });
   }
 });
 

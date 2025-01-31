@@ -1,6 +1,9 @@
 import React from 'react';
+// import { CardContext } from "../components/CardContext";
+
 
 const CheckoutForm = ({ handlePaymentSuccess }) => {
+  const { cart, setCart } = useContext(CartContext);
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
       const script = document.createElement('script');
@@ -25,17 +28,27 @@ const CheckoutForm = ({ handlePaymentSuccess }) => {
 
     const options = {
       key: 'rzp_test_1DP5mmOlF5G5ag', // Replace with your Razorpay test key
-      amount: 50000, // Amount in paise (50000 paise = 500 INR)
+      amount: 5, // Amount in paise (50000 paise = 500 INR)
       currency: 'INR',
-      name: 'Your Company Name',
+      name: 'VIIT - CC',
       description: 'Test Transaction',
-      handler: function (response) {
+      handler: async function (response) {
         console.log(response);
+              // Update transaction status in the backend
+              for (const item of cart) {
+                await fetch(`http://localhost:5000/api/print/${item.printId}`, {
+                  method: 'PUT',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({ transactionStatus: true }),
+                });
+              }
         handlePaymentSuccess();
       },
       prefill: {
-        name: 'Your Name',
-        email: 'your.email@example.com',
+        name: 'Tejaswini Durge',
+        email: 'tejaswinidurge41@gmaile.com',
         contact: '9999999999',
       },
       notes: {
@@ -46,9 +59,12 @@ const CheckoutForm = ({ handlePaymentSuccess }) => {
       },
     };
 
+
+
     const paymentObject = new window.Razorpay(options);
     paymentObject.open();
   };
+
 
   return (
     <button

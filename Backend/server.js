@@ -7,6 +7,8 @@ const path = require('path');
 const PrintJob = require('./models/PrintJob');
 const cors = require("cors");
 const cloudinary = require('cloudinary').v2;
+// Import Routes
+const authRoutes = require("./routes/auth");
 
 const app = express();
 
@@ -22,8 +24,7 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// Import Routes
-const authRoutes = require("./routes/auth");
+
 app.use("/api/auth", authRoutes);
 
 // Set up multer for file uploads
