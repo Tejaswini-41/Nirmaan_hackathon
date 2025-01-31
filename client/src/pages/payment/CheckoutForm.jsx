@@ -1,9 +1,9 @@
-import React from 'react';
-// import { CardContext } from "../components/CardContext";
-
+import React, { useContext } from 'react';
+import { CartContext } from '../components/CartContext';
 
 const CheckoutForm = ({ handlePaymentSuccess }) => {
   const { cart, setCart } = useContext(CartContext);
+
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
       const script = document.createElement('script');
@@ -59,12 +59,9 @@ const CheckoutForm = ({ handlePaymentSuccess }) => {
       },
     };
 
-
-
     const paymentObject = new window.Razorpay(options);
     paymentObject.open();
   };
-
 
   return (
     <button
